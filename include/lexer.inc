@@ -1,6 +1,21 @@
-%ifndef LEXER_INC
-%define LEXER_INC
+; Function prototypes
+extern lexer_init
+extern lexer_adv
+extern lexer_make_tokens
+extern lexer_make_num 
+extern position_init
+extern position_adv
+extern position_copy
+extern token_create
+extern error_create
+extern is_digit
+extern is_whitespace
+extern print_tokens
+extern print_error
 
-%define TT_INT      0
-%define TT_FLOAT    1
-%define TT_PLUS     2
+;glo data section 
+extern lexer_instance
+extern token_buffer 
+extern error_buffer
+extern temp_buffer
+extern digits_str

@@ -71,6 +71,41 @@
 %%end:
 %endmacro
 
+%macro WHITESPACE 2
+  cmp %1, CHAR_SPACE
+  je %%is_ws
+  cmp %1, CHAR_TAB
+  je %%is_ws
+  mov %2, 0 
+  jmp %%end
+%%is_ws:
+  mov %2, 1
+%%end:
+%%endmacro
+
+
+%macro ADV_POS 1
+  push eax
+  push ebx
+  mov eax, %1
+  inc dword [eax]     ; idx increment 
+  inc dword [eax + 8] ; col increment
+
+
+  mov ebx, [eax + 16]
+  mov edx, [eax]
+  cmp byte [ebx + edx -1], CHAR_NEWLINE
+  jne %%no_newline
+
+  inc dword [eax + 4]
+  mov dword [eax + 8], 0 
+
+
+%%no_newline:
+  pop ebx
+  pop eax
+%endmacro
+
 %macro SYS_WRITE 3
   mov eax, 4
   mov ebx, %1
@@ -79,6 +114,13 @@
   int 0x80
 %endmacro
 
+%macro SYS_READ 3
+  mov eaz, 3
+  mov ebx, %1
+  mov ecx, %2
+  mov edx, %3
+  int x80
+%endmacro
 
 %macro SYS_EXIT 1
   mov eax, 1
