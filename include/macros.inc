@@ -1,11 +1,3 @@
-%ifndef MACROS_INC
-%define MACROS_INC
-
-%define STDIN   0
-%define STDOUT  1
-%define STDERR  2
-
-%define BUFFER_SIZE 1024
 
 ; =================================
 ; Token types constants
