@@ -59,3 +59,75 @@ main_loop:
   add esp, 8
 
   jmp main_loop
+
+
+.handle_error:
+  push error_buffer
+  call print_error
+  add esp, 4
+  jmp main_loop
+
+remove_newline:
+  push eax
+  push ebx
+  mov ebx, input_buffer
+.loop:
+  mov al, [ebx]
+  cmp al, 10
+  je .found_newline
+  cmp al, 0
+  je .done
+  inc ebx
+  jmp .loop
+.found_newline:
+  mov byte [ebx], 0
+.done:
+  pop ebx
+  pop eax
+  ret
+
+
+.end_of_text:
+  mov dword [ebx + 28], 0
+
+.done:
+  pop ecx
+  pop ebx
+  pop eax
+  pop ebp
+  ret
+
+
+strlen:
+  push ebx
+  mov ebx, eax
+  xor eax, eax 
+.loop:
+  cmp byte [ebx + eax], 0
+  je .done
+  inc eax
+  jmp .loop
+.done:
+  pop ebx
+  ret
+
+position_init:
+  push ebp 
+  mov ebp, esp
+  push edi
+
+  mov edi, [ebp + 8]
+  mov eax, [ebp + 12]
+  mov [edi], eax
+  mov eax, [ebp + 16]
+  mov [edi + 4], eax
+  mov eax, [ebp + 20]
+  mov [edi + 8], eax
+  mov eax, [ebp + 24]
+  mov [edi + 12], eax
+  mov eax, [ebp + 28]
+  mov [edi + 16], eax
+
+  pop edi
+  pop ebp
+  ret 

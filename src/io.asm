@@ -1,16 +1,9 @@
-section .text
-global print_hello
-
-extern write
-
-print_hello:
-  mov rax, 1
-  mov rdi, 1
-  mov rsi, msg 
-  mov rdx, msg_len
-  syscall
-  ret
+%include "../include/macros.inc"
 
 section .data 
-msg db "Hello from io.asm!", 0xA
-msg_len equ $ - msg 
+  newline_char    db 10, 0
+  space_char      db ' ', 0
+
+section .text
+  global print_string, print_char, print_newline, print_number
+  global read
