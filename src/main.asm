@@ -1,5 +1,5 @@
-%include "../include/macros.inc"
-%include "../include/lexer.inc"
+%include "macros.inc"
+%include "lexer.inc"
 
 section .data
   prompt        db 'shell> ', 0
@@ -14,13 +14,14 @@ section .data
 
 section .bss
   lexer_instance    resb 32
-  token_buffer      resb MAX_TOKENS * TOKEN_SIZE
-  error_buffer      resb ERROR_SIZE
+  token_buffer      resb MAX_TOKEN * TOKEN_SIZE
+  error_buffer      resb ERR_SIZE
   temp_buffer       resb 256
   num_tokens        resb 1
 
 section .text
   global _start
+  global strlen
   extern lexer_init, lexer_make_tokens, print_tokens, print_error
 
 _start:
@@ -50,7 +51,7 @@ main_loop:
 
   ; Error check
   cmp eax, ERR_NONE
-  jne handle_error
+  jne .handle_error
 
   ; Print Tokens 
   push dword [num_tokens]
@@ -76,12 +77,12 @@ remove_newline:
   cmp al, 10
   je .found_newline
   cmp al, 0
-  je .done
+  je .remove_newline_done
   inc ebx
   jmp .loop
 .found_newline:
   mov byte [ebx], 0
-.done:
+.remove_newline_done:
   pop ebx
   pop eax
   ret
@@ -130,4 +131,4 @@ position_init:
 
   pop edi
   pop ebp
-  ret 
+  ret

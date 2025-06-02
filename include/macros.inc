@@ -1,4 +1,3 @@
-
 ; =================================
 ; Token types constants
 ; =================================
@@ -55,7 +54,7 @@
   cmp %1, CHAR_ZERO
   jl %%not_digit
   cmp %1, CHAR_NINE
-  ig %%not_digit
+  jg %%not_digit
   mov %2, 1
   jmp %%end 
 %%not_digit:
@@ -63,7 +62,7 @@
 %%end:
 %endmacro
 
-%macro WHITESPACE 2
+%macro IS_WHITESPACE 2
   cmp %1, CHAR_SPACE
   je %%is_ws
   cmp %1, CHAR_TAB
@@ -73,7 +72,7 @@
 %%is_ws:
   mov %2, 1
 %%end:
-%%endmacro
+%endmacro
 
 
 %macro ADV_POS 1
@@ -107,11 +106,11 @@
 %endmacro
 
 %macro SYS_READ 3
-  mov eaz, 3
+  mov eax, 3
   mov ebx, %1
   mov ecx, %2
   mov edx, %3
-  int x80
+  int 0x80
 %endmacro
 
 %macro SYS_EXIT 1
@@ -119,3 +118,12 @@
   mov ebx, %1
   int 0x80
 %endmacro
+
+%define TT_INT      TOKEN_INT
+%define TT_PLUS     TOKEN_PLUS
+%define TT_MINUS    TOKEN_MINUS
+%define TT_MUL      TOKEN_MULT
+%define TT_DIV      TOKEN_DIV
+%define TT_LPAREN   TOKEN_LPAREN
+%define TT_RPAREN   TOKEN_RPAREN
+%define TT_FLOAT    9

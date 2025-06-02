@@ -1,4 +1,4 @@
-%include "../include/macros.inc"
+%include "macros.inc"
 
 section .data
   digits_str    db '0123456789', 0
@@ -7,6 +7,7 @@ section .data
 section .text 
   global lexer_make_tokens, lexer_make_number, print_tokens, print_error
   global token_create, error_create, is_digit, is_whitespace
+  global lexer_advance
 
 lexer_make_tokens:
   push ebp 
@@ -31,7 +32,7 @@ lexer_make_tokens:
   IS_WHITESPACE eax, edx
   pop edx
   cmp edx, 1
-  je .skip whitespace
+  je .skip_whitespace
 
   push edx
   IS_DIGIT eax, edx
@@ -399,4 +400,10 @@ print_string:
     pop ebp
     ret
 
-extern lexer_advance, strlen
+lexer_advance:
+    ret
+
+lexer_init:
+    ret
+
+extern strlen
