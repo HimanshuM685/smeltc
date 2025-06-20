@@ -2,14 +2,25 @@
 ; Token types constants
 ; =================================
 
-%define TOKEN_INT     1
-%define TOKEN_PLUS    2
-%define TOKEN_MINUS   3
-%define TOKEN_MULT    4
-%define TOKEN_DIV     5
-%define TOKEN_LPAREN  6
-%define TOKEN_RPAREN  7
-%define TOKEN_EOF     8
+%define TT_INT      1
+%define TT_PLUS     2
+%define TT_MINUS    3
+%define TT_MUL      4
+%define TT_DIV      5
+%define TT_LPAREN   6
+%define TT_RPAREN   7
+%define TT_FLOAT    8
+%define TT_EOF      9
+
+; Legacy compatibility
+%define TOKEN_INT     TT_INT
+%define TOKEN_PLUS    TT_PLUS
+%define TOKEN_MINUS   TT_MINUS
+%define TOKEN_MULT    TT_MUL
+%define TOKEN_DIV     TT_DIV
+%define TOKEN_LPAREN  TT_LPAREN
+%define TOKEN_RPAREN  TT_RPAREN
+%define TOKEN_EOF     TT_EOF
 
 
 
@@ -119,11 +130,18 @@
   int 0x80
 %endmacro
 
-%define TT_INT      TOKEN_INT
-%define TT_PLUS     TOKEN_PLUS
-%define TT_MINUS    TOKEN_MINUS
-%define TT_MUL      TOKEN_MULT
-%define TT_DIV      TOKEN_DIV
-%define TT_LPAREN   TOKEN_LPAREN
-%define TT_RPAREN   TOKEN_RPAREN
-%define TT_FLOAT    9
+; =================================
+; AST Node Types
+; =================================
+
+%define AST_NUMBER    1
+%define AST_BINOP     2
+%define AST_UNARYOP   3
+
+; AST Node Sizes (in bytes)
+%define AST_NUMBER_SIZE   12    ; type(4) + value(4) + token_type(4)
+%define AST_BINOP_SIZE    16    ; type(4) + left(ptr 4) + op_token(4) + right(ptr 4)
+%define AST_UNARYOP_SIZE  12    ; type(4) + op_token(4) + node(ptr 4)
+
+; AST Buffer
+%define AST_BUFFER_SIZE   4096

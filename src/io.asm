@@ -11,6 +11,7 @@ section .data
 section .text
     global print_string, print_char, print_newline, print_number
     global read_line, string_length, string_copy, string_compare
+    global strlen
 
 print_string:
     push ebp
@@ -325,5 +326,28 @@ int_to_string:
     pop ebx
     pop edi
     pop esi
+    pop ebp
+    ret
+
+strlen:
+    push ebp
+    mov ebp, esp
+    push edi
+    push ecx
+    
+    mov edi, [ebp + 8]  ; string pointer
+    xor ecx, ecx        ; counter
+    
+.strlen_loop:
+    cmp byte [edi + ecx], 0
+    je .strlen_done
+    inc ecx
+    jmp .strlen_loop
+    
+.strlen_done:
+    mov eax, ecx
+    
+    pop ecx
+    pop edi
     pop ebp
     ret

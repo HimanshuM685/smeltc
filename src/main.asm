@@ -17,56 +17,68 @@ section .bss
   token_buffer      resb MAX_TOKEN * TOKEN_SIZE
   error_buffer      resb ERR_SIZE
   temp_buffer       resb 256
-  num_tokens        resb 1
+  num_tokens        resd 1
+  ast_buffer        resb AST_BUFFER_SIZE
+  ast_result_ptr    resd 1
 
 section .text
   global _start
-  global strlen
-  extern lexer_init, lexer_make_tokens, print_tokens, print_error
+  extern lexer_init, lexer_make_tokens, print_tokens, print_error, parser_parse
+  extern strlen
 
 _start:
-  call main_loop
-
-  SYS_EXIT 0
-
-main_loop:
-  SYS_WRITE 1, prompt, prompt_len
-  SYS_READ 0, input_buffer, MAX_TEXT_LEN
-  call remove_newline 
-  cmp byte [input_buffer], 0
-  je main_loop
-
-
-  push input_buffer
-  push lexer_instance
-  call lexer_init
-  add esp, 12
-
-  push error_buffer
-  push num_tokens
-  push token_buffer
-  push lexer_instance
-  call lexer_make_tokens
-  add esp, 16
-
-  ; Error check
-  cmp eax, ERR_NONE
-  jne .handle_error
-
-  ; Print Tokens 
-  push dword [num_tokens]
-  push token_buffer
-  call print_tokens
-  add esp, 8
-
-  jmp main_loop
-
+  ; Main loop
+.main_loop:
+    ; Print prompt
+    SYS_WRITE 1, prompt, prompt_len
+    
+    ; Read input
+    SYS_READ 0, input_buffer, 255
+    cmp eax, 0
+    jle .exit
+    
+    ; Null terminate the input
+    mov byte [input_buffer + eax - 1], 0  ; Remove newline
+    
+    ; Check for empty input
+    cmp byte [input_buffer], 0
+    je .main_loop
+    
+    ; Initialize lexer
+    push input_buffer
+    push lexer_instance
+    call lexer_init
+    add esp, 8
+    
+    ; Tokenize input
+    push num_tokens
+    push token_buffer
+    push lexer_instance
+    call lexer_make_tokens
+    add esp, 12
+    
+    ; Check for errors
+    cmp eax, ERR_NONE
+    jne .handle_error
+    
+    ; Print tokens
+    mov eax, [num_tokens]
+    push eax
+    push token_buffer
+    call print_tokens
+    add esp, 8
+    
+    jmp .main_loop
 
 .handle_error:
-  push error_buffer
-  call print_error
-  add esp, 4
-  jmp main_loop
+    call print_error
+    jmp .main_loop
+
+.exit:
+    SYS_EXIT 0
+
+; Export symbols for the linker
+global lexer_instance, token_buffer, temp_buffer, ast_buffer
 
 remove_newline:
   push eax
@@ -87,7 +99,6 @@ remove_newline:
   pop eax
   ret
 
-
 .end_of_text:
   mov dword [ebx + 28], 0
 
@@ -96,20 +107,6 @@ remove_newline:
   pop ebx
   pop eax
   pop ebp
-  ret
-
-
-strlen:
-  push ebx
-  mov ebx, eax
-  xor eax, eax 
-.loop:
-  cmp byte [ebx + eax], 0
-  je .done
-  inc eax
-  jmp .loop
-.done:
-  pop ebx
   ret
 
 position_init:

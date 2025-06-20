@@ -12,6 +12,7 @@ extern is_digit
 extern is_whitespace
 extern print_tokens
 extern print_error
+extern parser_parse
 
 ;glo data section 
 extern lexer_instance
@@ -19,3 +20,4 @@ extern token_buffer
 extern error_buffer
 extern temp_buffer
 extern digits_str
+extern ast_buffer
